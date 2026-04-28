@@ -1,0 +1,135 @@
+[
+  {
+    "chunk_id": "chunk_000001",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 1,
+    "token_count": 210,
+    "text": "Equivalence of NFA and DFA AU: May-05,12,13,14,16,18, Dec.-04,06,14,15,16,19, Marks 13 NFA can be converted to equivalent DFA. Following theorem illustrates this concept. Theorem: Let L be a set accepted by non-deterministic finite automation. Then there exists a deterministic finite automation that accepts L. OR Prove that \"A language L is accepted by some DFA if and only if L is accepted by some NFA\". AU: Dec.-15, Marks 10, AU: May-05, Dec.-14, Marks 10 Proof :Let M = (Q, Σ, δ, q0, F) be an NFA for language L. Then define DFA M' such that, M' = (Q', Σ`, δ', q0`, F') The states of M' are all the subset of M'. The Q'=2Q. F' be the set of all the final states in M. The elements in Q' will be denoted by [q1, q2, q3, ... qi] and the elements in Q are denoted by {q0, q1, q2, … }The [q1, q2, ... qi] will be assumed as one state in Q' if in the NFA q0 is a initial state it is denoted in DFA as q0` = [q0]. We define, δ' ([q1, q2, q3, … qi], a) = [P1, P2, P3, ... Pj] if and only if, 8({q1, q2 ,q3, ....qi}, a) = {P1, P2, P3, …. Pj}"
+  },
+  {
+    "chunk_id": "chunk_000002",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 2,
+    "token_count": 235,
+    "text": "This means that whenever in NFA, at the current states (q1, q2, q3, ...qi} if we get input a and it goes to the next states [P1, P2, ... Pj} then while constructing DFA for it the current state is assumed to be [q1, q2, q3, … qi, a]. At this state, the input is a and the next is assumed to be [P1, P2, ... Pj]. On applying δ function on each of the states q1, q2, q3, ...qi the new states may be any of the states from [P1, P2, ... Pj]. The theorem can be proved with the induction method by assuming length of input string x δ' (q0, x) = [q1, q2, ... qi]. if and only if, δ (q0, x) = {q1, q2, q3, ... qi} Basis: If length of input string is 0 i.e. |x| = 0, that means x is ε then q0` = [q0] Induction: If we assume that the hypothesis is true for the input string of length m or less than m. Then if x a is a string of length m+1. Then the function δ' could be written as, δ' (q0, xa) = δ' (δ' (q0, x), a) δ' (q0, x) = [P1, P2, … Pj] if and only if, δ (q0, x) = {P1, P2, P3, ... Pj} By definition of δ' δ' ([P1, P2, … Pj], a) = [r1, r2, .... rk]"
+  },
+  {
+    "chunk_id": "chunk_000003",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 3,
+    "token_count": 191,
+    "text": "if and only if, δ ({P1, P2, … Pj} a) = {r1, r2, ... rk} Thus δ' (q0, x a) = [r1, r2, .... rk] if and only if δ (q0, x a) = {r1, r2, ... rk} is shown by inductive hypothesis. Thus L (M) = L (M') With the help of this theorem, let us try to solve few examples. Conversion from NFA to DFA We will discuss the method of converting NFA to its equivalent DFA. Let, M = (Q, Σ, δ, q0, F) is a NFA which accepts the language L(M). There should be equivalent DFA denoted by M' = (Q', Σ`, δ', q0`, F') such that L(M) = L(M'). The conversion method will follow following steps - 1) The start state of NFA M will be the start for DFA M'. Hence add q0 of NFA (start state) to Q'. Then find the transitions from this start state. 2) For each state [q1, q2, q3, ... qi] in Q' the transitions for each input symbol Σ can be obtained as, i) δ' ([q1,q2 ...qi], a) = δ (q1, a) U δ (q2, a) U .........(qi, a)"
+  },
+  {
+    "chunk_id": "chunk_000004",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 4,
+    "token_count": 213,
+    "text": "= [q1, q2, …. qk ] may be some state. ii) Add the state [q1, q2, .... qk] to DFA if it is not already added in Q'. iii) Then find the transitions for every input symbol from Σ for state [q1, q2, ....,qk ]. If we get some state [q1, q2, ... qn ] which is not in Q' of DFA then add this state to Q`. iv) If there is no new state generating then stop the process after finding all the transitions. 3) For the state [q1, q2, …. qn] ϵ Q' of DFA if any one state qi is a final state of NFA then [q1, q2,......qn ] becomes a final state. Thus the set of all the final states ϵ F' of DFA. Example 1.10.1 Determine the DFA from a given NFA. M = ((q0, q1), (a, b), δ, q0, {q1}) with the state table diagram for δ given below. AU Dec.-16, Marks 10, May-18, Marks 13 Solution: Let the DFA M'= (Q', Σ, δ ', q0, F') Now, the δ' function will be computed as follows - As δ (q0, 0) = {q0, q1} δ` ([q0], 0) = [q0, q1] As in NFA the initial state is q0, the DFA will also contain the initial state [q0]."
+  },
+  {
+    "chunk_id": "chunk_000005",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 5,
+    "token_count": 96,
+    "text": "Let us draw the transition table for δ function for a given NFA. From the transition table we can compute that there are [q0], [q1], [q0, q1] states for its equivalent DFA. We need to compute the transition from state [q0, q1]. δ ({q0, q1},0) = δ (q0, 0) U δ (q1, 0) = {q0, q1} U ϕ = {q0, q1} So, δ' ([q0, q1], 0) = [q0, q1] Similarly, δ' ({q0, q1}, 1) = δ (q0,1) U δ (q1,1) = {q1} U {q0, q1} = {q0, q1} So, δ' ([q0, q1], 1) = [q0, q1]"
+  },
+  {
+    "chunk_id": "chunk_000006",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 6,
+    "token_count": 83,
+    "text": "As in the given NFA q1 is a final state, then in DFA wherever q1 exists that state becomes a final state. Hence in the DFA final states are [q1] and [q0, q1]. Therefore set of final states F = {[q1], [q0, q1]} We can even change the names of the states of DFA. A = [q0] B = [q1] C= [q0, q1] With these new names the DFA will be as in Fig. 1.10.2. Example 1.10.2 Construct DFA equivalent to the NFA"
+  },
+  {
+    "chunk_id": "chunk_000007",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 7,
+    "token_count": 99,
+    "text": "M = ((p, q, r), (0, 1), δ, p {q, s}) Where & is defined in the following table. AU: Dec.-04, Marks 8 Solution: To construct DFA, δ {p, 0} = {q, s} new state generated δ {p, 1} = {q} δ {q, 0} = {r} δ {q, 1} = {q, r} new state δ {r, 0} = {s} δ (r, 1) = {p} δ (s, 0} = - δ {s, 1} = {p} δ {{q, s}, 0} = {r} δ {{q, s}, 1} = {p, q, r} new state 8 {{q, r), 0} = {r, s} new state"
+  },
+  {
+    "chunk_id": "chunk_000008",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 8,
+    "token_count": 73,
+    "text": "δ {{q, r}, 1} = {p, q, r} δ {{p, q, r}, 0} = {q, r, s} new state δ {{p, q, r}, 1} = {p, q, r} δ {{r, s), 0} = {s} δ {{r, s), 1} = {p} δ {{q, r, s}), 0} = {r, s} δ {{q, r, s), 1} = {p, q, r} The transition table is as shown below. Example 1.10.3 Construct DFA equivalent to the given NFA."
+  },
+  {
+    "chunk_id": "chunk_000009",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 9,
+    "token_count": 33,
+    "text": "AU: Dec.-06, Marks 8, Dec.-19, Marks 13 Solution: The NFA M = {{p, q, r, s}, {0, 1}, δ (p), {s}} The equivalent DFA will be constructed. Continuing with the generated new states."
+  },
+  {
+    "chunk_id": "chunk_000010",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 10,
+    "token_count": 76,
+    "text": "The final state F' = { [s], [p, q, r, s], [p, q, s], [p, r, s], [p, s] } The transition graph shows two disconnected parts. But part I will be accepted as final DFA because it consists of start state and final states, in part II there is no start state. Refer Fig. 1.10.3 (See Fig. 1.10.3 on next page): Example 1.10.4 Convert the following NFA to a DFA . AU: May-13, Marks 10"
+  },
+  {
+    "chunk_id": "chunk_000011",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 11,
+    "token_count": 29,
+    "text": "Solution: We will apply δ transitions on each state for each input. δ ([p], a) = [p] δ ([p], b) = {p, q} = [p, q] → new state"
+  },
+  {
+    "chunk_id": "chunk_000012",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 12,
+    "token_count": 139,
+    "text": "δ ([q], a) = [r] δ ([q], b) = [r] δ ([r], a) = ϕ δ ([r], b) = ϕ The 8 transition on newly generated states δ ([p, q], a) = {p, r} = [p, r] → new state δ ([p, q], b) = {p, q, r) = [p, q, r] → new state δ ([p, r], a) = {p} U ϕ = [p] δ ([p, r], b) = {p, q} U i.e. [p, q] δ ([p, q, r], a) = {p} U {r} U ϕ = [p, r] δ ([p, q, r], b) = {p, q} U {r} U ϕ = {p, q, r} i.e. [p, q, r] As no new state is getting generated in above transitions, the transition table can be constructed as follows - Assuming [p] as start state and [r] as final state"
+  },
+  {
+    "chunk_id": "chunk_000013",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 13,
+    "token_count": 75,
+    "text": "The states [p, r] and [p, q, r] are final states as they contain [r]. The DFA can be represented by the transition diagarm as shown - The states [q] and [r] are eliminated as they are dead states. Example 1.10.5 Construct a DFA accepting binary strings such that the third symbol from the right end is 1. AU May-12, Marks 10 Solution: The strings in such a language are - The NFA will be,"
+  },
+  {
+    "chunk_id": "chunk_000014",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 14,
+    "token_count": 124,
+    "text": "The transition table can be – We will obtain the δ transitions on each input and state. δ (q0, 0) = [q0] δ (q0, 1) = [q0, q1] i.e. [q0, q1] → New state δ (q1, 0) = [q2], ​ δ (q1, 1) = [q2] δ (q2, 0) = [qf], ​ δ (q2, 1) = [qf] δ ([q0, q1], 0) = {q0, q2}, = [q0, q2] i.e. New state δ ([q0, q1], 1) = {q0, q1, q2} = [q0, q1, q2] → New state δ ([q0, q2], 0) = {q0, qF} = {q0, qf} → New state δ ([q0, q2], 1) = {q0, q1, 9f} = [q0, q1, qf] → New state δ ([q0, q1, q2], 0) = {q0, q2, qf} → New state"
+  },
+  {
+    "chunk_id": "chunk_000015",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 15,
+    "token_count": 108,
+    "text": "δ ([q0, q1, q2], 1) = {q0, q1, q2, qf } → New state δ ([q0, qf], 0) = [q0] δ ([q0, qf], 1) = [q0, q1] δ ([q0, q1, qf], 0) = [q0, q2] δ ([q0, q1, qf], 1) = [q0, q1, q2] δ ([q0, q2, qf], 0) = [q0, qf] δ ([q0, q2, qf], 1) = [q0, q1, qf] δ ([q0, q1, q2, qf], 0) = [q0, q2, qf] δ ([q0, q1, q2, qf], 1) = [q0, q1, q2, 9f] The transition table for above computation is as given below - The states q1, q2 and qf are not reachable states. Hence they can be eliminated."
+  },
+  {
+    "chunk_id": "chunk_000016",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 16,
+    "token_count": 48,
+    "text": "Example 1.10.6 Construct a non-deterministic finite automaton accepting the set of strings over {a,b} ending in aba. Use it to construct a DFA accepting the same set of strings. AU: May-14, Marks 10 Solution: NFA for accepting the strings ending with aba is, The transition table will be"
+  },
+  {
+    "chunk_id": "chunk_000017",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 17,
+    "token_count": 87,
+    "text": "We will obtain 8 transitions for each input on each state. δ (q0, a) = {q0, q1} = [q0, q1] new state. δ (q0, b) = {q0} δ (q1, a) = ϕ δ (q1, b) = {q2} δ (q2, a) = {q3} δ (q2, b) = ϕ δ (q3, a) = ϕ δ (q3, b) = ϕ The δ transitions on newly generated states is δ ([q0, q1], a) = {q0, q1} i.e. [q0, q1] δ ([q0, q1], b) = {q0, q2} = [q0, q2] new state"
+  },
+  {
+    "chunk_id": "chunk_000018",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 18,
+    "token_count": 102,
+    "text": "δ ([q0, q2], a) = {q0, q1, q3} = [q0, q1, q3] new state δ ([q0, q2], b) = {q0} δ ([q0, q1, q3], a) = [q0, q1] δ ([q0, q1, q3], b) = [q0, q2] As no new state is getting generated. We will build transition table is as follows - The DFA will be as shown in Fig. 1.10.5 The states q1, q2 and q3 are non-reachable. Hence they will be eliminated. Example 1.10.7 Construct a DFA equivalent to the NFA. M=({a, b, c, d}, {0,1} δ, a {b, d}) where δ is a defined as AU Dec.-14, Marks 6"
+  },
+  {
+    "chunk_id": "chunk_000019",
+    "document": "Equivalence of NFA and DFA.pdf",
+    "page": 19,
+    "token_count": 86,
+    "text": "Solution: Refer similar example 1.10.2 by assuming p = a, q=b, r = c and s = d. Example 1.10.8 Construct NFA that accepts all string that end in 01. Give its transition table and extended transition function for the input string 00101. Also construct a DFA for the above NFA using subset construction method. AU May-16, Marks 10 Solution: The NFA will be designed using r.e. = (0+1)* 01 The transition table will be as follows: Refer example 1.10.6 for conversion of NFA to DFA."
+  }
+]

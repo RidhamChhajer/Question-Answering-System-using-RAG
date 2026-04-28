@@ -1,0 +1,33 @@
+.wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 420px;
+  font-size: 13px;
+}
+.step {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--text-3);
+  transition: color var(--transition);
+}
+.step.active { color: var(--accent); font-weight: 500; }
+.step.done   { color: var(--success); }
+
+.icon { width: 16px; text-align: center; font-size: 12px; flex-shrink: 0; }
+.label { flex: 1; }
+.eta   { font-size: 11px; color: var(--text-4); }
+
+/* Spinner */
+.spinner {
+  display: inline-block;
+  width: 12px; height: 12px;
+  border: 2px solid var(--accent-light);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

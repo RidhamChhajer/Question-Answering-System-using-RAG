@@ -1,0 +1,76 @@
+.panel { display: flex; flex-direction: column; height: 100%; overflow: hidden; }
+
+.header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 16px 10px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border);
+}
+.label { font-size: 11px; font-weight: 600; color: var(--text-3); letter-spacing: 0.06em; text-transform: uppercase; }
+.newBtn {
+  font-size: 12px; color: var(--accent); font-weight: 500;
+  padding: 3px 10px;
+  border: 1px solid rgba(37,99,235,0.25);
+  border-radius: var(--r-sm);
+  transition: all var(--transition);
+}
+.newBtn:hover { background: var(--accent-light); border-color: var(--accent); }
+
+.empty {
+  padding: 24px 16px;
+  font-size: 12px; color: var(--text-4); text-align: center;
+}
+
+.list { flex: 1; overflow-y: auto; }
+
+.skeletonRow { padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+
+.row {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  position: relative;
+  transition: background var(--transition);
+}
+.row:hover { background: var(--surface-2); }
+.row.active {
+  background: var(--accent-light);
+  border-left: 2px solid var(--accent);
+}
+
+.rowTop { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 3px; }
+.title { font-size: 13px; font-weight: 500; color: var(--text-1); flex: 1; }
+.active .title { color: var(--accent); }
+
+.renameBtn {
+  color: var(--text-4); flex-shrink: 0;
+  width: 22px; height: 22px;
+  border-radius: var(--r-sm);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0;
+  transition: opacity var(--transition), background var(--transition);
+}
+.row:hover .renameBtn { opacity: 1; }
+.renameBtn:hover { background: var(--surface); color: var(--accent); }
+
+.deleteBtn {
+  opacity: 0;
+  padding: 3px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  border-radius: var(--r-sm);
+  color: var(--text-4);
+}
+.row:hover .deleteBtn { opacity: 1; }
+.deleteBtn:hover { color: var(--danger); }
+
+.editInput {
+  font-size: 13px; font-weight: 500; color: var(--text-1);
+  border: 1px solid var(--accent);
+  border-radius: var(--r-sm);
+  padding: 1px 6px; outline: none;
+  flex: 1;
+}
+
+.date { font-size: 11px; color: var(--text-4); }

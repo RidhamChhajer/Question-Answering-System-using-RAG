@@ -1,0 +1,14 @@
+[
+  {"id": 1, "question": "What is a finite automaton?", "expected_keywords": ["finite", "automaton", "state", "transition", "accept"], "category": "definition"},
+  {"id": 2, "question": "What is the difference between DFA and NFA?", "expected_keywords": ["deterministic", "nondeterministic", "DFA", "NFA", "transition"], "category": "comparison"},
+  {"id": 3, "question": "Explain the pumping lemma.", "expected_keywords": ["pumping", "lemma", "regular", "language", "string"], "category": "explanation"},
+  {"id": 4, "question": "How does gradient descent work?", "expected_keywords": ["gradient", "descent", "learning", "rate", "minimize"], "category": "process"},
+  {"id": 5, "question": "What is a context-free grammar?", "expected_keywords": ["context", "free", "grammar", "production", "rule"], "category": "definition"},
+  {"id": 6, "question": "What is FA?", "expected_keywords": ["finite", "automata", "state"], "category": "abbreviation"},
+  {"id": 7, "question": "Explain backpropagation.", "expected_keywords": ["backpropagation", "gradient", "neural", "weight", "loss"], "category": "explanation"},
+  {"id": 8, "question": "What is Turing machine?", "expected_keywords": ["turing", "machine", "tape", "head", "halt"], "category": "definition"},
+  {"id": 9, "question": "Compare stack and queue data structures.", "expected_keywords": ["stack", "queue", "LIFO", "FIFO", "push"], "category": "comparison"},
+  {"id": 10, "question": "How does binary search work?", "expected_keywords": ["binary", "search", "sorted", "midpoint", "divide"], "category": "process"},
+  {"id": 11, "question": "What is NP-completeness?", "expected_keywords": ["NP", "complete", "polynomial", "reduction", "problem"], "category": "definition"},
+  {"id": 12, "question": "What is CFG?", "expected_keywords": ["context", "free", "grammar", "production"], "category": "abbreviation"}
+]

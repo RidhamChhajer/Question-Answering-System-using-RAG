@@ -1,0 +1,4 @@
+# This file keeps the vector_store/ directory tracked by Git.
+# The actual files in this directory (faiss_index.bin, metadata.json) are
+# excluded by .gitignore — they are generated locally by running:
+#   python main.py --phase 2
