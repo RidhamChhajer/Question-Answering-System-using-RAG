@@ -53,7 +53,7 @@ RETRIEVAL_POOL  = 20
 RERANK_TOP_N    = 5
 
 # LLM
-OLLAMA_MODEL    = "llama3.2:3b"
+OLLAMA_MODEL    = "mistral"
 LLM_MODEL       = OLLAMA_MODEL # alias
 OLLAMA_OPTIONS  = {
     "num_ctx": 8192,

@@ -42,6 +42,9 @@ export default function Workspace({ notebook, initConvId }) {
   const startX        = useRef(0);
   const startPct      = useRef(DEF_RIGHT);
   const pollRef       = useRef(null);
+  // Tracks the ID of an auto-created empty conversation so we can delete it
+  // if the user navigates away before sending any message.
+  const emptyConvRef  = useRef(null);
   const nbId = notebook?.id;
 
   // ── Load sources ──────────────────────────────────────────────────────────
@@ -54,14 +57,27 @@ export default function Workspace({ notebook, initConvId }) {
 
   useEffect(() => { loadSources(); }, [loadSources]);
 
+  // Delete the current empty auto-created conv (if any) before switching away.
+  const discardEmptyConv = useCallback(async () => {
+    const emptyId = emptyConvRef.current;
+    if (!emptyId) return;
+    emptyConvRef.current = null;
+    try {
+      await deleteConversation(emptyId);
+      setConvs(prev => prev.filter(c => c.id !== emptyId));
+    } catch (_) { /* ignore */ }
+  }, []);
+
   const newConv = useCallback(async () => {
+    await discardEmptyConv();          // clean up previous empty chat first
     const conv = await createConversation(nbId);
+    emptyConvRef.current = conv.id;    // mark as empty until a message is sent
     setConvs(prev => [conv, ...prev]);
     setActiveConvId(conv.id);
     setMessages([]);
     setFeedbackMap({});
     setPipeline([]);
-  }, [nbId]);
+  }, [nbId, discardEmptyConv]);
 
   useEffect(() => {
     const handler = (e) => {
@@ -110,12 +126,23 @@ export default function Workspace({ notebook, initConvId }) {
         const map = await fetchFeedback(initConvId);
         setFeedbackMap(map);
       } else {
-        const conv = await createConversation(nbId);
-        setConvs([conv, ...convs]);
-        setActiveConvId(conv.id);
-        setMessages([]);
-        setFeedbackMap({});
-        if (convs.length === 0) setShowUpload(true); // first time → open upload
+        // Reuse the most recent conversation if it is still empty,
+        // so refreshing the page doesn't keep adding blank chats.
+        const newestEmpty = convs.find(c => c.message_count === 0);
+        if (newestEmpty) {
+          emptyConvRef.current = newestEmpty.id;
+          setActiveConvId(newestEmpty.id);
+          setMessages([]);
+          setFeedbackMap({});
+        } else {
+          const conv = await createConversation(nbId);
+          emptyConvRef.current = conv.id;
+          setConvs([conv, ...convs]);
+          setActiveConvId(conv.id);
+          setMessages([]);
+          setFeedbackMap({});
+          if (convs.length === 0) setShowUpload(true); // first time → open upload
+        }
       }
     }).catch(console.error)
       .finally(() => setIsConvsLoading(false));
@@ -129,13 +156,14 @@ export default function Workspace({ notebook, initConvId }) {
 
   // ── Switch conversation ───────────────────────────────────────────────────
   const selectConv = useCallback(async (cid) => {
+    await discardEmptyConv();          // delete the empty chat before switching
     setActiveConvId(cid);
     const msgs = await fetchMessages(cid);
     setMessages(msgs.map(fmtMsg));
     const map = await fetchFeedback(cid);
     setFeedbackMap(map);
     setPipeline([]);
-  }, []);
+  }, [discardEmptyConv]);
 
   const handleDeleteConv = useCallback(async (cid) => {
     await deleteConversation(cid);
@@ -200,6 +228,7 @@ export default function Workspace({ notebook, initConvId }) {
         setMessages(prev => prev.map(m => m.id === aiId ? { ...m, sources: srcs } : m));
       },
       onDone: () => {
+        emptyConvRef.current = null;   // message sent → conversation is no longer empty
         setIsStreaming(false);
         setPipeline([]);
         setMessages(prev => prev.map(m => m.id === aiId ? { ...m, streaming: false } : m));

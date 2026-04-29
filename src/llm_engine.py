@@ -3,14 +3,14 @@ llm_engine.py
 -------------
 Thin wrapper around the Ollama Python SDK for local LLM inference.
 
-Model: llama3.2:3b
+Model: mistral
   - Runs fully locally via the Ollama daemon
   - No external API calls
   - Strong reasoning, good for RAG
 
 Prerequisites:
   1. Install Ollama: https://ollama.com/download
-  2. Pull the model once:  ollama pull llama3.2:3b
+  2. Pull the model once:  ollama pull mistral
   3. Install SDK:          pip install ollama>=0.3.0
 
 Streaming is enabled so the user sees output token-by-token.

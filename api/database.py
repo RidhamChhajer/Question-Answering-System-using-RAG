@@ -130,7 +130,14 @@ def get_conversation(cid):
 def list_conversations(notebook_id):
     with _conn() as c:
         rows = c.execute("SELECT * FROM conversations WHERE notebook_id=? ORDER BY created_at DESC", (notebook_id,)).fetchall()
-    return [dict(r) for r in rows]
+        result = []
+        for r in rows:
+            d = dict(r)
+            d["message_count"] = c.execute(
+                "SELECT COUNT(*) FROM messages WHERE conversation_id=?", (d["id"],)
+            ).fetchone()[0]
+            result.append(d)
+    return result
 
 def rename_conversation(cid, title):
     with _conn() as c:

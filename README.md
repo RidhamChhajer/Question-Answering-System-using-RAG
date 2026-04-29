@@ -80,7 +80,7 @@ flowchart LR
    ```
 4. Pull the local LLM.
    ```bash
-   ollama pull llama3.2:3b
+   ollama pull mistral
    ```
 5. Start the backend (new terminal).
    ```bash
@@ -127,8 +127,8 @@ flowchart LR
 | `TOP_K` | `5` | Default retrieval size. |
 | `RETRIEVAL_POOL` | `20` | Candidate pool before rerank. |
 | `RERANK_TOP_N` | `5` | Final chunks after rerank. |
-| `OLLAMA_MODEL` | `llama3.2:3b` | Ollama model tag. |
-| `LLM_MODEL` | `llama3.2:3b` | Alias for LLM model. |
+| `OLLAMA_MODEL` | `mistral` | Ollama model tag. |
+| `LLM_MODEL` | `mistral` | Alias for LLM model. |
 | `OLLAMA_HOST` | `http://127.0.0.1:11434` | Local Ollama API endpoint used by the Python client. |
 | `OLLAMA_OPTIONS` | `{"num_ctx": 8192, "num_gpu": 17, "num_thread": 8}` | Ollama runtime options tuned for a Quadro M1200-class GPU. |
 | `CONTEXT_CAP` | `3000` | Max context words. |

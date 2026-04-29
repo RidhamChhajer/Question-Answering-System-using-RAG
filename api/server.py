@@ -344,7 +344,7 @@ def _run_index(notebook_id, src_ids):
         # Count pages per document from the chunks
         import json, collections
         chunks_path = config.get_processed_dir(notebook_id) / "chunks.json"
-        with open(chunks_path) as f:
+        with open(chunks_path, encoding="utf-8") as f:
             all_chunks = json.load(f)
 
         pages_by_doc = collections.defaultdict(set)
@@ -352,18 +352,17 @@ def _run_index(notebook_id, src_ids):
             pages_by_doc[chunk["document"]].add(chunk["page"])
         indexed_docs = set(pages_by_doc)
 
-        # Update page count for each source
+        # Update ALL sources in this notebook — pipeline re-indexes everything
+        # so every source should reflect the current indexed state.
         sources = list_sources(notebook_id)
         for src in sources:
             pages = pages_by_doc.get(src["filename"], set())
             update_source_metadata(src["id"], len(pages))
-        source_by_id = {src["id"]: src for src in sources}
-        for sid in src_ids:
-            src = source_by_id.get(sid)
-            if src and src["filename"] in indexed_docs:
-                update_source_status(sid, "ready")
-            else:
-                update_source_status(sid, "error: no indexed text found for this file")
+            if src["filename"] in indexed_docs:
+                update_source_status(src["id"], "ready")
+            elif src["id"] in src_ids:
+                # Newly uploaded file that produced no text (e.g. empty/image-only)
+                update_source_status(src["id"], "error: no indexed text found for this file")
     except Exception as e:
         for sid in src_ids: update_source_status(sid, f"error: {e}")
 

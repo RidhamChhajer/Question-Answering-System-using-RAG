@@ -42,7 +42,11 @@ export const uploadFiles  = (nbId, files) => {
   form.append('notebook_id', nbId);
   files.forEach(f => form.append('files', f));
   return fetch(BASE + '/upload', { method:'POST', body:form })
-    .then(r => r.json()).then(d => d.sources);
+    .then(r => {
+      if (!r.ok) return r.json().then(e => { throw new Error(e.detail || 'Upload failed'); });
+      return r.json();
+    })
+    .then(d => d.sources);
 };
 
 // ── Ask (SSE streaming) ────────────────────────────────────────────────────────
