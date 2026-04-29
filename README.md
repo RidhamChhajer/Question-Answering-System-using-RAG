@@ -1,184 +1,292 @@
 # RAG Question-Answering System
-Local-first RAG, no cloud APIs, no data leaves your machine.
 
-## Features
-- Multi-notebook organization with per-notebook indexes and metadata.
-- PDF, TXT, and DOCX ingestion with per-source status tracking.
-- Sentence-aware chunking with overlap for better context.
-- Multi-query expansion for short or ambiguous questions.
-- Hybrid retrieval (FAISS + BM25) with reciprocal rank fusion.
-- Cross-encoder reranking with BAAI/bge-reranker-base.
-- Two answer modes: standard and map-reduce.
-- Conversation memory window for follow-up questions.
-- SSE streaming responses for token-by-token output.
-- Markdown rendering with GFM support in chat.
-- Source chunk preview and citations.
-- Feedback buttons (thumbs up/down) on answers.
-- LLM-generated conversation titles.
-- Dark mode toggle with persisted theme.
-- Loading skeletons during fetch.
-- Responsive layout for desktop and mobile.
-- Keyboard shortcuts for fast navigation and editing.
-- Export conversations to Markdown.
-- Delete sources and conversations.
-- Retry failed uploads and re-indexing.
-- Structured logging for backend pipeline steps.
-- Input validation and error handling.
-- Rate limiting on the ask endpoint.
-- React Router for deep links to notebooks.
-- Migration-based SQLite schema management.
-- Unit tests with pytest.
+A local-first Retrieval-Augmented Generation (RAG) application for asking questions over uploaded documents.
+
+The system lets users create notebooks, upload study resources, index them locally, and ask questions with source-backed answers. It runs with a local Ollama model, so document content does not need to be sent to any cloud API.
+
+## Key Features
+
+- Multi-notebook workspace with separate indexes per notebook.
+- PDF, DOCX, and TXT document ingestion.
+- Text cleaning and sentence-aware chunking with overlap.
+- Local embeddings using `all-MiniLM-L6-v2`.
+- FAISS vector search for semantic retrieval.
+- BM25 keyword search for exact-term matching.
+- Hybrid retrieval with Reciprocal Rank Fusion (RRF).
+- Query expansion for short or ambiguous questions.
+- Cross-encoder reranking with `BAAI/bge-reranker-base`.
+- Local answer generation with Ollama using `mistral`.
+- Standard and map-reduce answer modes.
+- Streaming responses using Server-Sent Events (SSE).
+- Conversation history and notebook memory.
+- Source citations with chunk previews.
+- Feedback buttons for generated answers.
+- Upload, retry, and delete source workflows.
+- SQLite persistence with schema migrations.
+- React frontend with dark mode, search, export, and responsive layout.
+- Pytest test suite and retrieval benchmark scripts.
 
 ## Architecture
+
 ```mermaid
 flowchart LR
-    Q[User Question] --> QE[Query Expansion]
-    QE --> F[FAISS Search]
-    QE --> B[BM25 Search]
-    F --> RRF[RRF Fusion]
-    B --> RRF
-    RRF --> RR[Reranker]
-    RR --> CA[Context Assembly]
-    CA --> LLM[Ollama LLM]
-    LLM --> S[Streamed Answer]
+    A[Upload Documents] --> B[Extract Text]
+    B --> C[Clean Text]
+    C --> D[Chunk Documents]
+    D --> E[Generate Embeddings]
+    E --> F[FAISS Index]
+    D --> G[BM25 Corpus]
+
+    Q[User Question] --> H[Query Expansion]
+    H --> I[FAISS Search]
+    H --> J[BM25 Search]
+    I --> K[RRF Fusion]
+    J --> K
+    K --> L[Cross-Encoder Reranker]
+    L --> M[Context Assembly]
+    M --> N[Ollama LLM]
+    N --> O[Streamed Answer + Sources]
 ```
 
 ## Tech Stack
-| Layer | Tech |
+
+| Layer | Technology |
 | --- | --- |
-| LLM | Ollama (`mistral`) |
-| Embeddings | all-MiniLM-L6-v2 |
-| Re-ranker | BAAI/bge-reranker-base |
-| Vector Store | FAISS |
+| Frontend | React 18, Vite, React Router |
+| Backend | FastAPI, SQLite |
+| LLM | Ollama `mistral` |
+| Embeddings | `all-MiniLM-L6-v2` |
+| Vector Search | FAISS |
 | Keyword Search | rank-bm25 |
-| Backend | FastAPI + SQLite |
-| Frontend | React 18 + Vite |
-| Doc Parsing | PyMuPDF, python-docx |
-| Routing | React Router DOM |
+| Reranking | `BAAI/bge-reranker-base` |
+| Document Parsing | PyMuPDF, python-docx |
+| Streaming | Server-Sent Events |
 | Testing | pytest |
 
+## Project Structure
+
+```text
+.
+|-- api/
+|   |-- server.py          # FastAPI routes and streaming answer endpoint
+|   `-- database.py        # SQLite persistence helpers
+|-- src/
+|   |-- document_loader.py # PDF, DOCX, TXT text extraction
+|   |-- text_cleaner.py    # Extracted text cleanup
+|   |-- chunker.py         # Sentence-aware chunking
+|   |-- embedding_model.py # SentenceTransformer embeddings
+|   |-- vector_store.py    # FAISS index creation and loading
+|   |-- bm25_retriever.py  # BM25 sparse retrieval
+|   |-- retriever.py       # Hybrid retrieval logic
+|   |-- reranker.py        # Cross-encoder reranking
+|   |-- rag_engine.py      # RAG prompt and answer orchestration
+|   |-- map_reduce_engine.py
+|   `-- query_expander.py
+|-- frontend/
+|   `-- src/               # React pages, components, and API client
+|-- migrations/            # SQLite schema migrations
+|-- tests/                 # Unit tests
+|-- evaluation/            # Benchmark scripts and test questions
+|-- config.py              # Central project configuration
+|-- main.py                # CLI pipeline entry point
+|-- requirements.txt       # Python dependencies
+`-- README.md
+```
+
 ## Prerequisites
+
 - Python 3.10+
 - Node.js 18+
-- Ollama: https://ollama.com
 - Git
+- Ollama installed and running
 
-## Quick Start
-1. Clone the repo and enter it.
-   ```bash
-   git clone <your-repo-url>
-   cd Question-Answering-System-using-RAG-main
-   ```
-2. Install backend dependencies.
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Install frontend dependencies.
-   ```bash
-   cd frontend
-   npm install
-   ```
-4. Pull the local LLM.
-   ```bash
-   ollama pull mistral
-   ```
-5. Start the backend (new terminal).
-   ```bash
-   uvicorn api.server:app --reload --port 8000
-   ```
-6. Start the frontend (new terminal) and open the app.
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-   Open http://localhost:5173
+Install Ollama from:
+
+```text
+https://ollama.com
+```
+
+Pull the configured local model:
+
+```bash
+ollama pull mistral
+```
+
+## Setup
+
+Clone the repository:
+
+```bash
+git clone <your-repo-url>
+cd Question-Answering-System-using-RAG-main
+```
+
+Create and activate a Python virtual environment:
+
+```bash
+python -m venv venv
+```
+
+On Windows:
+
+```bash
+venv\Scripts\activate
+```
+
+On macOS/Linux:
+
+```bash
+source venv/bin/activate
+```
+
+Install backend dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Install frontend dependencies:
+
+```bash
+cd frontend
+npm install
+cd ..
+```
+
+## Running The App
+
+Start the backend:
+
+```bash
+uvicorn api.server:app --reload --port 8000
+```
+
+Start the frontend in a second terminal:
+
+```bash
+cd frontend
+npm run dev
+```
+
+Open the app:
+
+```text
+http://localhost:5173
+```
+
+## Typical Workflow
+
+1. Create a notebook.
+2. Upload PDF, DOCX, or TXT sources.
+3. Wait until indexing finishes.
+4. Select the sources you want to ask from.
+5. Ask a question in the chat.
+6. Review the streamed answer and cited source chunks.
+7. Use feedback, export, or conversation history as needed.
 
 ## CLI Usage
-| Command/Flag | Phase | Description |
-| --- | --- | --- |
-| `python main.py` | 1 + 2 | Process documents and build the FAISS index. |
-| `python main.py --phase 1` | 1 | PDF/TXT/DOCX to chunks.json. |
-| `python main.py --phase 2` | 2 | Chunks to FAISS index and metadata. |
-| `python main.py --query "..."` | 3 | Semantic search (no LLM). |
-| `python main.py --ask "..."` | 4 | Full RAG answer, standard mode. |
-| `python main.py --ask "..." --mode mapreduce` | 5 | Map-reduce answer mode. |
-| `--top-k K` | 3-5 | Number of chunks to retrieve. |
-| `--model MODEL` | 4-5 | Ollama model tag to use. |
+
+The project also includes a command-line pipeline through `main.py`.
+
+| Command | Description |
+| --- | --- |
+| `python main.py` | Run document processing and embedding pipeline. |
+| `python main.py --phase 1` | Extract, clean, and chunk documents. |
+| `python main.py --phase 2` | Build FAISS and BM25 indexes from chunks. |
+| `python main.py --query "your question"` | Run retrieval only, without LLM generation. |
+| `python main.py --ask "your question"` | Run full RAG answer generation. |
+| `python main.py --ask "your question" --mode mapreduce` | Use map-reduce answer mode. |
+
+Useful flags:
+
+| Flag | Description |
+| --- | --- |
+| `--top-k K` | Number of final chunks to use. |
+| `--model MODEL` | Ollama model tag to use. |
+| `--mode standard` | Single-pass answer mode. |
+| `--mode mapreduce` | Multi-step answer synthesis mode. |
 
 ## Configuration
-| Variable | Default | Notes |
-| --- | --- | --- |
-| `BASE_DIR` | project root | Base path for the repo. |
-| `DATA_DIR` | `data/` | Raw data root. |
-| `PROCESSED_DIR` | `processed/` | Chunk output root. |
-| `VECTOR_DIR` | `vector_store/` | FAISS and BM25 storage. |
-| `DB_PATH` | `notebooks.db` | SQLite database file. |
-| `INPUT_FOLDER` | `data/raw_pdfs/` | CLI input folder. |
-| `PDF_DIR` | `data/raw_pdfs/` | Alias for input folder. |
-| `CHUNKS_PATH` | `processed/chunks.json` | CLI chunks output. |
-| `INDEX_PATH` | `vector_store/faiss_index.bin` | CLI FAISS index. |
-| `METADATA_PATH` | `vector_store/metadata.json` | CLI metadata. |
-| `CHUNK_SIZE` | `600` | Words per chunk. |
-| `CHUNK_OVERLAP` | `75` | Word overlap between chunks. |
-| `OVERLAP` | `75` | Alias for overlap. |
-| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | SentenceTransformer model. |
-| `MODEL_NAME` | `all-MiniLM-L6-v2` | Alias for embedding model. |
-| `EMBEDDING_DIM` | `384` | Vector dimension. |
-| `TOP_K` | `5` | Default retrieval size. |
-| `RETRIEVAL_POOL` | `20` | Candidate pool before rerank. |
-| `RERANK_TOP_N` | `5` | Final chunks after rerank. |
-| `OLLAMA_MODEL` | `mistral` | Ollama model tag. |
-| `LLM_MODEL` | `mistral` | Alias for LLM model. |
-| `OLLAMA_HOST` | `http://127.0.0.1:11434` | Local Ollama API endpoint used by the Python client. |
-| `OLLAMA_OPTIONS` | `{"num_ctx": 8192, "num_gpu": 17, "num_thread": 8}` | Ollama runtime options tuned for a Quadro M1200-class GPU. |
-| `CONTEXT_CAP` | `3000` | Max context words. |
-| `MAX_CONTEXT_WORDS` | `3000` | Alias for context cap. |
-| `HISTORY_MESSAGES` | `4` | Recent messages kept for memory. |
-| `HISTORY_MAX_WORDS` | `500` | Max words for history. |
-| `BATCH_SIZE` | `32` | Embedding batch size. |
-| `ENABLE_MULTI_QUERY` | `True` | Enable query expansion. |
-| `MULTI_QUERY_COUNT` | `3` | Variants per query. |
-| `ENABLE_HYBRID_SEARCH` | `True` | Enable FAISS + BM25. |
-| `RRF_K` | `60` | Reciprocal rank fusion constant. |
-| `BM25_TOP_K_MULTIPLIER` | `2` | BM25 pool multiplier. |
-| `IVF_THRESHOLD` | `5000` | Switch to IVF index above this size. |
-| `IVF_NLIST` | `100` | IVF nlist. |
-| `IVF_NPROBE` | `10` | IVF nprobe. |
-| `LOG_FORMAT` | `%(asctime)s [%(levelname)s] %(name)s: %(message)s` | Logging format. |
-| `LOG_LEVEL` | `INFO` | Logging level. |
 
-## Project Structure
-```
-.
-├── api/                - FastAPI server and database access
-├── src/                - RAG pipeline, retrieval, and LLM orchestration
-├── frontend/
-│   └── src/            - React UI
-├── migrations/         - SQLite schema migrations
-├── tests/              - pytest suites
-├── evaluation/         - Benchmark scripts and test questions
-├── config.py           - Central configuration
-├── main.py             - CLI pipeline entry point
-└── requirements.txt    - Python dependencies
-```
+Main settings live in `config.py`.
+
+| Setting | Current Value | Purpose |
+| --- | --- | --- |
+| `OLLAMA_MODEL` | `mistral` | Local LLM used for generation. |
+| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Embedding model for chunks and queries. |
+| `CHUNK_SIZE` | `600` | Target words per chunk. |
+| `CHUNK_OVERLAP` | `75` | Word overlap between chunks. |
+| `TOP_K` | `5` | Default number of retrieved chunks. |
+| `RETRIEVAL_POOL` | `20` | Candidate pool before reranking. |
+| `RERANK_TOP_N` | `5` | Final chunks after reranking. |
+| `ENABLE_MULTI_QUERY` | `True` | Enables query expansion. |
+| `ENABLE_HYBRID_SEARCH` | `True` | Enables FAISS + BM25 retrieval. |
+| `CONTEXT_CAP` | `3000` | Maximum context words sent to the LLM. |
+| `DB_PATH` | `notebooks.db` | SQLite database path. |
 
 ## API Endpoints
-| Method | Path | Description |
+
+| Method | Endpoint | Description |
 | --- | --- | --- |
-| GET | `/api/notebooks` | List notebooks with counts. |
-| POST | `/api/notebooks` | Create a new notebook. |
-| PATCH | `/api/notebooks/{nid}` | Rename or update a notebook. |
-| DELETE | `/api/notebooks/{nid}` | Delete a notebook. |
-| POST | `/api/notebooks/{nid}/touch` | Mark notebook as recently opened. |
-| GET | `/api/notebooks/{nid}/conversations` | List conversations for a notebook. |
-| POST | `/api/notebooks/{nid}/conversations` | Create a conversation. |
-| PATCH | `/api/conversations/{cid}` | Rename a conversation. |
-| DELETE | `/api/conversations/{cid}` | Delete a conversation and its messages. |
-| GET | `/api/conversations/{cid}/messages` | List messages in a conversation. |
-| POST | `/api/messages/{mid}/feedback` | Submit feedback (up/down) for a message. |
-| GET | `/api/conversations/{cid}/feedback` | Get feedback map for a conversation. |
-| POST | `/api/ask` | Stream an answer via SSE. |
-| POST | `/api/upload` | Upload PDF/TXT/DOCX sources. |
-| GET | `/api/sources/{nid}` | List sources for a notebook. |
-| DELETE | `/api/sources/{sid}` | Delete a source and trigger re-index if needed. |
-| POST | `/api/sources/{sid}/retry` | Retry indexing a failed source. |
+| `GET` | `/api/notebooks` | List notebooks with source and conversation counts. |
+| `POST` | `/api/notebooks` | Create a notebook. |
+| `PATCH` | `/api/notebooks/{nid}` | Rename/update a notebook. |
+| `DELETE` | `/api/notebooks/{nid}` | Delete a notebook. |
+| `POST` | `/api/notebooks/{nid}/touch` | Mark a notebook as recently opened. |
+| `GET` | `/api/notebooks/{nid}/conversations` | List conversations. |
+| `POST` | `/api/notebooks/{nid}/conversations` | Create a conversation. |
+| `PATCH` | `/api/conversations/{cid}` | Rename a conversation. |
+| `DELETE` | `/api/conversations/{cid}` | Delete a conversation. |
+| `GET` | `/api/conversations/{cid}/messages` | List messages. |
+| `POST` | `/api/messages/{mid}/feedback` | Save answer feedback. |
+| `GET` | `/api/conversations/{cid}/feedback` | Get feedback for a conversation. |
+| `POST` | `/api/ask` | Stream a RAG answer through SSE. |
+| `POST` | `/api/upload` | Upload and index sources. |
+| `GET` | `/api/sources/{nid}` | List notebook sources. |
+| `DELETE` | `/api/sources/{sid}` | Delete a source and re-index remaining sources. |
+| `POST` | `/api/sources/{sid}/retry` | Retry indexing a failed source. |
+
+## Testing
+
+Run the test suite:
+
+```bash
+python -m pytest -q
+```
+
+The tests cover:
+
+- text cleaning
+- chunking behavior
+- SQLite database operations
+- query expansion fallback behavior
+
+## Evaluation
+
+The `evaluation/` folder contains scripts for comparing retrieval configurations.
+
+Run a benchmark:
+
+```bash
+python evaluation/benchmark.py
+```
+
+Compare results:
+
+```bash
+python evaluation/compare.py
+```
+
+The benchmark measures retrieval latency, reranking latency, retrieved chunk count, unique source coverage, and keyword hit rate.
+
+## Current Limitations
+
+- The current LLM setup is text-only. It does not directly understand images, diagrams, arrows, handwriting, or visual layout.
+- OCR is not currently implemented.
+- Scanned PDFs or image-only notes may not index well unless selectable text is available.
+- Legacy `.doc` files are not reliably parsed by the current loader; use `.docx`, `.pdf`, or `.txt`.
+- First-time model downloads for embeddings and reranking can take time.
+
+## Notes
+
+This project is designed as a local RAG system for academic document question-answering. It is especially useful for searchable notes, textbooks, PDFs, and typed study resources where answers should be grounded in uploaded sources.
