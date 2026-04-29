@@ -46,7 +46,7 @@ flowchart LR
 ## Tech Stack
 | Layer | Tech |
 | --- | --- |
-| LLM | Ollama (`llama3.2:3b`) |
+| LLM | Ollama (`mistral`) |
 | Embeddings | all-MiniLM-L6-v2 |
 | Re-ranker | BAAI/bge-reranker-base |
 | Vector Store | FAISS |
